@@ -1,4 +1,3 @@
-import re
 from collections import deque
 infile = "input.txt"
 
@@ -27,7 +26,7 @@ for line in open(infile):
         if s not in data:
             data[s] = []
         data[s].append(first)
-        
+
 #part 1 BFS
 tar = "shinygold"
 seen = set()
