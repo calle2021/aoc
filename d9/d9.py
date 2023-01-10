@@ -3,8 +3,6 @@ data = []
 for line in open(infile):
     line = line.strip()
     data.append(eval(line))
-#print(data)
-
 #part 1
 l = 25
 mean = []
@@ -27,7 +25,7 @@ for i, n in enumerate(data):
     else:
         mean.pop(0)
         mean.append(n)
-        
+#part 2        
 var = True
 x = 0
 while var:
