@@ -36,16 +36,15 @@ acc, _ = calc(ins)
 print(acc)
     
 # part 2
-ins2 = ins.copy()
 converter = {"jmp" : "nop", "nop" : "jmp"}
 
 for n in range(0, len(ins)):
     if ins[n][0] == "acc":
         continue
-    ins2[n] = (converter[ins2[n][0]], ins2[n][1])
-    acc, found = calc(ins2)
+    ins[n] = (converter[ins[n][0]], ins[n][1])
+    acc, found = calc(ins)
     if found:
         print(acc)
         break
-    ins2[n] = (converter[ins2[n][0]], ins2[n][1])
+    ins[n] = (converter[ins[n][0]], ins[n][1])
     
