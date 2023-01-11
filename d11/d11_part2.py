@@ -25,15 +25,14 @@ def adj(seat, occ, empt, dirs, max_x, max_y):
             continue
         if x > max_x or y > max_y:
             continue
-        n = 1
         while 0 <= x <= max_x and 0 <= y <= max_y:
             if (x, y) in empt:
                 break
             if (x, y) in occ :
                 count += 1
                 break
-            x = x + n * d[0]
-            y = y + n * d[1]
+            x += d[0]
+            y += d[1]
     return count
 
 occupied = set()

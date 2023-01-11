@@ -25,7 +25,6 @@ def adj(seat, occ, dirs, max_x, max_y):
             continue
         if x > max_x or y > max_y:
             continue
-
         if (x, y)  in occ:
             count += 1
     return count
