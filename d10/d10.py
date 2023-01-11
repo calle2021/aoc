@@ -1,4 +1,3 @@
-from collections import deque
 infile = "input.txt"
 
 data = []
