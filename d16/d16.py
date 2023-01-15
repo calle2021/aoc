@@ -10,11 +10,14 @@ my_ticket = []
 nearby_tickets = []
 
 for line in open(infile):
+    if line == "\n":
+        continue
+
     if "your ticket" in line:
         found_my_ticket = True
     elif "nearby tickets" in line:
         found_nearby_ticket = True
-    elif not found_my_ticket and not found_nearby_ticket and line != "\n":
+    elif not found_my_ticket and not found_nearby_ticket:
         field, line = line.split(": ")
         field = field.replace(" ", "")
         fields[field] = []
@@ -27,7 +30,7 @@ for line in open(infile):
         for n in range(int(r[0]), int(r[1]) + 1):
             valid_nbrs.add(n) 
             fields[field].append(n)
-    elif found_my_ticket and not found_nearby_ticket and line != "\n":
+    elif found_my_ticket and not found_nearby_ticket: 
         my_ticket  = list(eval(line))
     elif found_nearby_ticket and line != "\n":
         nearby_tickets.append(list(eval(line)))
