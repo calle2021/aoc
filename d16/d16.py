@@ -31,17 +31,17 @@ for line in open(infile):
         my_ticket  = list(eval(line))
     elif found_nearby_ticket and line != "\n":
         nearby_tickets.append(list(eval(line)))
-s = 0
+s1 = 0
 nearby = []
 for ticket in nearby_tickets:
     valid = True
     for n in ticket:
         if n not in valid_nbrs:
-            s += n
+            s1 += n
             valid = False
     if valid:
         nearby.append(ticket)
-print(s) # part 1
+print(s1) # part 1
 
 def get_index(lst, n):
     return [itm[n] for itm in lst]
@@ -67,9 +67,9 @@ while q:
         q.append(curr)
         idx.append(i)
 
-s = 1
+s2 = 1
 for key in d:
     if "departure" in key:
         i = d[key]
-        s *= my_ticket[i]
-print(s)
+        s2 *= my_ticket[i]
+print(s2)
