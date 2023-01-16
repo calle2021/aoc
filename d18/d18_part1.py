@@ -1,5 +1,6 @@
 import re
 from typing import Match
+
 infile = "input.txt"
 
 PATTERN = re.compile(r'\(([^()]+)\)')
