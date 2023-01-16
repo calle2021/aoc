@@ -18,12 +18,8 @@ def compute(line):
     val = int(nbrs[0])
     i = 1
     while i < len(nbrs):
-        op = nbrs[i]
         n = nbrs[i+1]
-        if op == "+":
-            val += int(n)
-        elif op == "*":
-            val *= int(n)
+        val *= int(n)
         i += 2
     return val
 
