@@ -1,4 +1,3 @@
-from collections import deque
 infile = "input.txt"
 
 data = {}
@@ -9,7 +8,7 @@ for line in open(infile):
     allergens = allergens.replace(")", "")
     allergens = allergens.replace(",", "")
     allergens = allergens.split(" ")
-    ingredients = ingredients.split(" ")
+    ingredients = set(ingredients.split(" "))
     for i in ingredients:
         all_ingredients.append(i)     
     for al in allergens:
@@ -18,28 +17,32 @@ for line in open(infile):
         else:
             data[al] = []
             data[al].append(ingredients)
-
-#part 1        
 map = {}
-for d in data:
-    count = {}
-    dishes = data[d]
-    for i in dishes:
-        for j in i:
-            if j in count:
-                count[j] += 1
-            else:
-                count[j] = 1
-    for c in count:
-        if count[c] ==  len(dishes):
-            map[c] = d
-    for k in data:
-        for l in data[k]:
-            for m in map:
-                if m in l:
-                    l.remove(m)
+for key in data:
+    recipies = data[key]
+    s = set.intersection(*recipies)
+    map[key] = s
 
-for m in map:
+assigned = {}
+while map:
+    for k, v in map.items():
+        if len(v) == 1:
+            val, = v
+            assigned[k] = val
+            del map[k]
+            for vals in map.values():
+                vals.discard(val)
+            break
+
+#part 1
+for m in assigned.values():
     if m in all_ingredients:
         all_ingredients = list(filter(lambda a: a != m, all_ingredients))
 print(len(all_ingredients))
+
+#part 2
+res = ""
+a = sorted(assigned.keys())
+res = ','.join([assigned[i] for i in a])
+print(res)
+
