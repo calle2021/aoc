@@ -21,12 +21,12 @@ for key in data:
     s = set.intersection(*recipies)
     map[key] = s
 
-assigned = {}
+allergens = {}
 while map:
     for k, v in map.items():
         if len(v) == 1:
             val, = v
-            assigned[k] = val
+            allergens[k] = val
             del map[k]
             for vals in map.values():
                 vals.discard(val)
@@ -34,13 +34,13 @@ while map:
 
 #part 1
 l = 0
-for m in assigned.values():
+for m in allergens.values():
     l += all_ingredients.count(m)
 print(len(all_ingredients) - l)
 
 #part 2
 res = ""
-a = sorted(assigned.keys())
-res = ','.join([assigned[i] for i in a])
+a = sorted(allergens.keys())
+res = ','.join([allergens[i] for i in a])
 print(res)
 
