@@ -5,9 +5,7 @@ all_ingredients = []
 for line in open(infile):
     line = line.strip()
     ingredients, allergens = line.split(" (contains ")
-    allergens = allergens.replace(")", "")
-    allergens = allergens.replace(",", "")
-    allergens = allergens.split(" ")
+    allergens = allergens.strip(")").split(", ")
     ingredients = set(ingredients.split(" "))
     for i in ingredients:
         all_ingredients.append(i)     
@@ -35,10 +33,10 @@ while map:
             break
 
 #part 1
+l = 0
 for m in assigned.values():
-    if m in all_ingredients:
-        all_ingredients = list(filter(lambda a: a != m, all_ingredients))
-print(len(all_ingredients))
+    l += all_ingredients.count(m)
+print(len(all_ingredients) - l)
 
 #part 2
 res = ""
