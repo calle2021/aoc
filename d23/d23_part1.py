@@ -2,41 +2,38 @@ ex = "389125467"
 input = "123487596"
 
 s = [int(i) for i in input]
-l = len(s)
-curr = 0
-for _ in range(100):
-    pick = []
-    this_ = s[curr]
-    dest = s[curr] - 1
-    if dest == 0:
-        dest = 9
-    for i in range(3):
-        if curr+1 < len(s):
-            pick.append(s.pop(curr+1))
-        else:
-            pick.append(s.pop(0))
 
-    while dest in pick:
-        if dest != 1:
-            dest -= 1
-        else:
+d = {}
+idx = 1
+for i in range(1, len(s)):
+    d[s[i-1]] = s[i]
+    idx += 1
+d[s[len(s)-1]] = s[0]
+
+def move(curr):
+    dest = curr - 1
+    a = d[curr]
+    b = d[a]
+    c = d[b]
+    while dest == a or dest == b or dest == c or dest == 0:
+        if dest < 1:
             dest = 9
-    idx = s.index(dest)
-    s.insert(idx+1, pick[0])
-    s.insert(idx+2, pick[1])
-    s.insert(idx+3, pick[2])
-    curr = s.index(this_) + 1
-    if curr == 9:
-        curr = 0
+        else:
+            dest -= 1
+    d[curr] = d[c]
+    d[c] = d[dest]
+    d[b] = c
+    d[dest] = a
+    return d[curr]
 
-idx_ = s.index(1)
-s.pop(idx_)
-res = []
-while s:
-    if idx_ < len(s):
-        res.append(s.pop(idx_))
-    else:
-        res.append(s.pop(0))
-res = ''.join(map(str, res))
+curr = s[0]
+moves = 100
+for _ in range(moves):
+    curr = move(curr)
 
-print(res)
+curr = d[1]
+output = ""
+for i in range(len(d)-1):
+    output += str(curr)
+    curr = d[curr]
+print(output)
