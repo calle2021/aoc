@@ -4,10 +4,8 @@ input = "123487596"
 s = [int(i) for i in input]
 
 d = {}
-idx = 1
 for i in range(1, len(s)):
     d[s[i-1]] = s[i]
-    idx += 1
 d[s[len(s)-1]] = s[0]
 
 def move(curr):
