@@ -2,101 +2,69 @@ import re
 import numpy as np
 from collections import deque
 
-infile = "ex.txt"
+infile = "input.txt"
+
+def transform(tile):
+    tiles = []
+    for _ in range(2):
+        for _ in range(4):
+            tiles.append(tile)
+            tile = np.rot90(tile)
+        tile = np.flip(tile, 0)
+    return tiles
 
 data = []
-ids = []
 with open(infile) as f:
     tiles = f.read().split("\n\n")
     for t in tiles:
-        grid = t.splitlines()
-        tile = grid.pop(0)
-        tile = re.findall(r'\d+', tile)[0]
-        s = []
-        [s.append(list(str(x))) for x in grid ]
-        ids.append(eval(tile))
-        data.append(np.array(s))
-
-w = len(data[0][:, 0])
-h = len(data[0][0, :])
-
-print(len(data))
-
-#matching top with down, down with up, etc
-lambdas = {"top" : (lambda x: x[h-1, :]), "down" : (lambda x: x[0, :]), "right" : (lambda x: x[:, 0]), "left" : (lambda x: x[:, w-1])}
-
-def transform(side, tile, orr):
-    for _ in range(2):
-        for _ in range(4):
-            t_ = lambdas[orr](tile)
-            s_ = ''.join(str(e) for e in t_)
-            if side == s_:
-                return tile
-            tile = np.rot90(tile)
-        tile = np.flip(tile, 0)
-    return []
-
-data2 = []
-map = {}
-pos = (0,0)
-
-curr = data.pop(0)
-curr_id = ids.pop(0)
-map[curr_id] = pos
-
-
-q = deque([curr])
-ids_ = deque([curr_id])
-
-visited = set()
-count = 0
-while q:
-    
-    curr = q.popleft()
-    curr_id = ids_.popleft()
-    if curr_id in visited:
-        continue
-    visited.add(curr_id)
-
-    pos = map[curr_id]
-    data2.append(curr)
-
-    top = ''.join(str(e) for e in curr[0, :])
-    right = ''.join(str(e) for e in curr[:, w-1])
-    down = ''.join(str(e) for e in curr[h-1, :])
-    left = ''.join(str(e) for e in curr[:, 0])
-
-    for i, d in enumerate(data):
-        t = transform(top, d, "top")
-        if len(t) != 0:
-            data2.append(t)
-            q.append(t)
-            ids_.append(ids[i])
-            map[ids[i]] = (pos[0], pos[1] - 1)
-
-        t = transform(right, d, "right")
-        if len(t) != 0:
-            data2.append(t)
-            q.append(t)
-            ids_.append(ids[i])
-            map[ids[i]] = (pos[0] + 1 , pos[1])
-
-        t = transform(down, d, "down")
-        if len(t) != 0:
-            data2.append(t)
-            q.append(t)
-            ids_.append(ids[i])
-            map[ids[i]] = (pos[0], pos[1] + 1)
+        tiles = t.splitlines()
+        tile_id = tiles.pop(0)
+        tile_id = re.findall(r'\d+', tile_id)[0]
+        tile = []
+        [tile.append(list(str(x))) for x in tiles ]
         
-        t = transform(left, d, "left")
-        if len(t) != 0 :
-            data2.append(t)
-            q.append(t)
-            ids_.append(ids[i])
-            map[ids[i]] = (pos[0] - 1, pos[1])
+        tile = np.array(tile)
+        ts_ = transform(tile)
+        for t in ts_:
+            data.append([eval(tile_id), t])
+w = len(data[0][1][0, :])
+h = len(data[0][1][:, 0])
 
-print(len(data2))
-print(map)
+def check_above(tile, s):
+    if ''.join(str(e) for e in tile[:, 0]) == s:
+        return True
+    return False
 
-grid = [ [0]*3 for i in range(3)]
-print(grid)
+
+def check_left(tile, s):
+    if ''.join(str(e) for e in tile[0, :]) == s:
+        return True
+    return False
+
+g = {}
+visited = set()
+GRID_SIZE = 12
+f = {}
+first = True
+res = []
+def align(r, c, visited) :
+    if r == GRID_SIZE:
+        res.append(g.copy())
+        print(res[0][(0, 0)][0] * res[0][(11, 0)][0] * res[0][(0, 11)][0] * res[0][(11, 11)][0] )
+        exit()
+    for tiles in data:
+        if tiles[0] in visited:
+            continue
+        if r > 0 and not np.array_equal(tiles[1][0, :], g[(r - 1, c)][1][h-1, :]):
+                continue
+        if c > 0 and not np.array_equal(tiles[1][:, 0], g[(r, c - 1)][1][:, w-1]):
+                continue
+
+        g[(r , c)] = tiles
+        visited.add(tiles[0])
+        if( c == GRID_SIZE -1):
+            align(r + 1, 0, visited)
+        else:
+            align(r, c + 1, visited)
+        visited.remove(tiles[0])
+align(0, 0, visited)
