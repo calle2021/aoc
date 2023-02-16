@@ -7,7 +7,7 @@ for i in open(infile):
 count = 0
 for i in range(1,len(data)):
     if data[i-1] < data[i]:
-        count+=1
+        count += 1
 #part 1
 print(count)
 
