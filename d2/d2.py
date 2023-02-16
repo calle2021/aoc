@@ -8,7 +8,7 @@ aim = 0
 p1 = (0, 0)
 p2 = (0, 0)
 for i in ins:
-    dir , dist = i.split()
+    dir, dist = i.split()
     dist = int(dist)
     if dir == "forward":
         p1 = (p1[0] + dist, p1[1])
