@@ -1,8 +1,6 @@
 import numpy as np
 infile = "input.txt"
 
-
-
 boards = []
 with open(infile) as f:
     f = f.read()
@@ -11,10 +9,8 @@ with open(infile) as f:
 
     for board in input:
         rows = board.split("\n")
-        b = []
         row = []
         for r in rows:
-            b_ = set()
             row_ = [int(r_) for r_ in r.split()]
             row.append(row_)
         arr = np.array(row)
