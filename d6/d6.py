@@ -19,3 +19,4 @@ for i in range(256):
 else:
     #part 2
     print(sum(data))
+    
