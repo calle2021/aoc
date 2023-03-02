@@ -1,4 +1,4 @@
-infile = "ex.txt"
+infile = "input.txt"
 
 data = []
 for line in open(infile):
@@ -12,11 +12,13 @@ def interval(start, end):
         return [n for n in range(start, end + 1)]
     else:
         return [n for n in range(end, start + 1)]
-
-#print(data)
+def sign(start, end):
+    if start < end:
+        return 1
+    else:
+        return -1
 d = {}
 for l in data:
-    print(l)
     points = []
     if l[0] == l[2]:
         i = interval(l[1], l[3])
@@ -25,9 +27,10 @@ for l in data:
         i = interval(l[0], l[2])
         points = [(x, l[1]) for x in i]
     else:
-        rx = interval(l[0], l[2])
-        ry = interval(l[1], l[3])
-
+        rx = [x for x in range(l[0], l[2] + sign(l[0], l[2]), sign(l[0], l[2]))]
+        ry = [y for y in range(l[1], l[3] + sign(l[1], l[3]), sign(l[1], l[3]))]
+        for i, _ in enumerate(rx):
+            points.append((rx[i], ry[i]))
     for p in points:
         if p in d:
             d[p] += 1
