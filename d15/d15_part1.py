@@ -17,6 +17,7 @@ goal = goal[-1]
 def heuristic(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
+#A*
 front = []
 start = (0, 0)
 heappush(front, (0, start))
