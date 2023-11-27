@@ -17,11 +17,6 @@ for i in range(len(x)):
         x[i].right = x[i+1]
         x[i].left = x[i-1]
 
-
-def printer(x):
-    for i in range(len(x)):
-        print(x[i].left.n, x[i].n, x[i].right.n)
-        
 m = len(x) - 1
 for _ in range(10):
     for node in x:
