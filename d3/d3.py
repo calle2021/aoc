@@ -21,7 +21,7 @@ for y, row in enumerate(schematic):
 adjacent = [(1, 0), (-1, 0), (0, -1) , (0, 1), (1, 1), (-1, 1), (-1, -1), (1, -1)] 
 
 part_numbers = 0
-gears = []
+gear_ratios = 0
 for s in symbols:
     adj = {(s[0] + a[0], s[1] + a[1]) for a in adjacent}
     gear = []
@@ -29,14 +29,9 @@ for s in symbols:
         if adj & set(n):
             part_numbers += int(numbers[n])
             if symbols[s] == "*": gear.append(int(numbers[n]))
-    gears.append(gear)
+    if len(gear) == 2:
+        gear_ratios += gear[0] * gear[1]
 #part 1
 print(part_numbers)
-
-gear_ratios = 0
-for g in gears:
-    if len(g) != 2: continue
-    gear_ratio = g[0] * g[1]
-    gear_ratios += gear_ratio
 #part 2
 print(gear_ratios)
