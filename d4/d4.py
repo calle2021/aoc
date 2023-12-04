@@ -19,11 +19,9 @@ for i, c in enumerate(cards):
 #part 1
 print(s)
 
-i = 0
 for i in range(len(cs)):
     for _ in range(count[i]):
         for j in range(cs[i]):
             count[i + j + 1] += 1
-    i += 1
 #part 2
 print(sum(count))
