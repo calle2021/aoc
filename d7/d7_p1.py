@@ -4,25 +4,13 @@ input = "input.txt"
 
 hands = [d.strip() for d in open(input).readlines()]
 
-s = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
+s = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
 
 def type_score(hand):
     unique = set(hand)
     counts = []
-    js = 0
-    if "J" in unique:
-        unique.remove("J")
-        js = hand.count("J")
-    
-    if js == 5: return 7
-
     for u in unique:
         counts.append(hand.count(u))
-
-    # add js to highest count
-    if js:
-        counts = sorted(counts)
-        counts[-1] += js
 
     if 5 in counts:
         return 7
@@ -39,6 +27,7 @@ def type_score(hand):
     if len(unique) == len(hand):
         return 1
     return None #sanity
+
 
 def compare_hands(h1, h2):
     c1 = h1.split(" ")[0]
@@ -66,5 +55,5 @@ winnings = 0
 for rank, hand in enumerate(hands):
     bid = int(hand.split(" ")[1])
     winnings += (rank + 1) * bid
-#part 2
+#part 1
 print(winnings)
