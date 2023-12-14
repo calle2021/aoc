@@ -1,36 +1,48 @@
 
-import re
 input = "input.txt"
 rows = [d.strip() for d in open(input).readlines()]
 
-arrangements = 0 
-for row in rows:
-    r, c = row.split(" ")
-    group = list(eval(c))
-    indicies = [i.start() for i in re.finditer(r"\?", r)]
-
-    combinations = []
-    for x in r:
-        if x == "?":
-            new = []
-            if len(combinations) == 0:
-                new.append("#")
-                new.append(".")
-            else:
-                for comb in combinations:
-                    new.append(comb + "#")
-                    new.append(comb + ".")
-            combinations = new
+cache = {}
+def rec(s, g, checking = False):
+    key = (s, *g, checking)
+    if key in cache:
+        return cache[key]
+    if not s:
+        return 1 if g == [] or g == [0] else 0
+    if not g:
+        return 0 if "#" in s else 1
+    
+    res = 0
+    if s[0] == ".":
+        if checking:
+            if g[0] == 0:
+                res += rec(s[1:], g[1:], False)
         else:
-            if len(combinations) == 0:
-                combinations.append(x)
+            res += rec(s[1:], g, False)
+    elif s[0] == "#":
+        if checking:
+            if g[0] != 0:
+                res += rec(s[1:], [g[0] - 1] + g[1:], True)
+        else:
+            res +=  rec(s[1:], [g[0] - 1] + g[1:], True)
+    elif s[0] == "?":
+        if checking:
+            if g[0] == 0:
+                res += rec(s[1:], g[1:], False)
             else:
-                combinations = [c + x for c in combinations ]
+                res += rec(s[1:], [g[0] - 1] + g[1:], True)
+        else:
+            if g[0] == 0:
+                res += rec(s[1:], g[1:], False)
+            else:
+                res += rec(s[1:], g, False) + rec(s[1:], [g[0] - 1] + g[1:], True)
+    cache[key] = res
+    return res
 
-    for c in combinations:
-        arrangement = [len(r) for r in re.findall(r"#*",c) if len(r) > 0]
-        if arrangement == group:
-            arrangements += 1
-
-print(arrangements)
-
+count = 0 
+for row in rows:
+    spring, group = row.split(" ")
+    group = list(eval(group))
+    count += rec(spring, group)
+#part 1
+print(count)
