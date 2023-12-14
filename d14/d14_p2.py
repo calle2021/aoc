@@ -1,4 +1,4 @@
-input = "ex.txt"
+input = "input.txt"
 
 
 round = []
@@ -36,12 +36,11 @@ s = {
     "E" : lambda x: -x.real
 }
 
-
 cycle = 0
-target = 100000000
-t = [round]
-cache = {tuple(round)}
-while True:
+seen = [round]
+goal = 1000000000
+flag = True
+while cycle < goal:
     cycle += 1
     print(cycle)
     for d in dirs:
@@ -54,18 +53,15 @@ while True:
             round[i] += -1 * dirs[d]
             stat.append(round[i])
             i += 1
+    round = sorted(round, key=s["N"])
+    round = sorted(round, key=s["W"])
+    key = round
+    if key in seen and flag:
+        l = cycle - seen.index(key)
+        steps = (goal - cycle) // l
+        cycle += steps * l
+        flag = False
+    seen.append(key)
 
-    key = tuple(round)
 
-    if key in cache:
-        break
-        
-    cache.add(key)
-    t.append(round[:])
-
-
-f = t.index(round[:])
-r = t[(target - f) % (cycle - f) + f]
-
-load = int(sum(my - l.imag + 1 for l in r))
-print("load", load)
+print(sum(int(my - l.imag + 1) for l in round))
