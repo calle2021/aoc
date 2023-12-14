@@ -1,4 +1,4 @@
-input = "ex0.txt"
+input = "ex.txt"
 
 
 round = []
@@ -17,8 +17,8 @@ for y, row in enumerate( open(input).read().split("\n")):
             stationary.append(x + y * 1j)
 
 def printer(s, r):
-    for y in range(my):
-        for x in range(mx):
+    for y in range(my +1):
+        for x in range(mx +1 ):
             v = x + y * 1j
             if v in r:
                 print("O", end="")
@@ -27,26 +27,45 @@ def printer(s, r):
             else:
                 print(".", end="") 
         print("")
-round = sorted(round, key=lambda x: x.imag)
 
 dirs = {"N" : -1j, "W" : -1, "S" : 1j, "E" : 1}
+s = {
+    "N" : lambda x: x.imag,
+    "S" : lambda x: -x.imag,
+    "W" : lambda x: x.real,
+    "E" : lambda x: -x.real
+}
+
+
 cycle = 0
-load = 0
-seen = set()
-for d in dirs:
-    i = 0
-    stat = stationary[:]
-    while i != len(round):
-        curr = round[i]
-        while curr not in stat and curr.imag >= 0 and curr.real >= 0 and curr.imag <= my and curr.real <= mx:
-            curr += dirs[d]
-        curr += -1 * dirs[d]
-        load += int(my - curr.imag + 1)
-        stat.append(curr)
-        i += 1
-    #cycle += 1
-    #key = (*stationary, d)
-    #if key in stationary:
-    #    load *= (1000000000 - cycle)
-printer(stat, round)    
-print(load)
+target = 100000000
+t = [round]
+cache = {tuple(round)}
+while True:
+    cycle += 1
+    print(cycle)
+    for d in dirs:
+        i = 0
+        stat = stationary[:]
+        round = sorted(round, key=s[d])
+        while i != len(round):
+            while round[i] not in stat and round[i].imag >= 0 and round[i].real >= 0 and round[i].imag <= my and round[i].real <= mx:
+                round[i] += dirs[d]
+            round[i] += -1 * dirs[d]
+            stat.append(round[i])
+            i += 1
+
+    key = tuple(round)
+
+    if key in cache:
+        break
+        
+    cache.add(key)
+    t.append(round[:])
+
+
+f = t.index(round[:])
+r = t[(target - f) % (cycle - f) + f]
+
+load = int(sum(my - l.imag + 1 for l in r))
+print("load", load)
