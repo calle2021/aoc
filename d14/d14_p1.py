@@ -1,31 +1,20 @@
+import numpy as np
+
 input = "input.txt"
 
+grid = np.array([[x for x in y] for y in open(input).read().split("\n")])
+dim = len(grid)
 
-round = []
-square = []
-stationary = []
-my = 0
-mx = 0
-for y, row in enumerate( open(input).read().split("\n")):
-    my = max(my, y)
-    for x, v in enumerate(row):
-        mx = max(mx, x)
-        if v == "O":
-            round.append(x + y * 1j) 
-        elif v == "#":
-            square.append(x + y * 1j)
-            stationary.append(x + y * 1j)
-
-round = sorted(round, key=lambda x: x.imag)
-
-i = 0
-load = 0
-while round:
-    curr = round.pop(0)
-    while curr not in stationary and curr.imag >= 0:
-        curr -= 1j
-    curr += 1j
-    load += int(my - curr.imag + 1)
-    stationary.append(curr)
-    i += 1
-print(load)
+for i, col in enumerate(grid.T):
+    squares = np.asarray(np.where(col == "#")).flatten().tolist()
+    squares.insert(0, -1)
+    squares.append(dim)
+    for s1, s2 in zip(squares[:], squares[1:]):
+        counts = np.count_nonzero(col[s1+1:s2] == "O")
+        col[s1+1:s2] = "."
+        col[s1+1:s1+1 + counts] = "O"
+res = 0
+for y, row in enumerate(grid):
+    count = np.count_nonzero(row == "O")
+    res += count * (dim - y)
+print(res)
