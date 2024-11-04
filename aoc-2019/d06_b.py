@@ -16,8 +16,8 @@ for node in puzzle.strip().split("\n"):
       com[y] = [x]
    else:
       com[y].append(x)
-      
-#Djikstra
+
+#Dijkstra
 front = []
 start = com["YOU"][0]
 goal = com["SAN"][0]
