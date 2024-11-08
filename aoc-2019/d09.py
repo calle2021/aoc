@@ -17,7 +17,6 @@ ids = {
 
 def intcode(prog, i=0, input=[0]):
     ins = prog[i]
-
     base = 0
     if ins == 99:
         return input.pop(), i, True
