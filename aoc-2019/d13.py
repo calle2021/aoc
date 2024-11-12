@@ -1,5 +1,4 @@
 from aocd.models import Puzzle
-import time
 year = 2019
 day = 13
 puzzle = Puzzle(year=year, day=day)
