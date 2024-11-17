@@ -1,5 +1,4 @@
 from aocd.models import Puzzle
-from math import ceil
 year = 2019
 day = 16
 puzzle = Puzzle(year=year, day=day)
