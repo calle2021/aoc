@@ -11,7 +11,7 @@ signal = [int(x) for x in input_signal]
 patterns = []
 base = [0, 1, 0, -1]
 curr = [0, 1, 0, -1]
-for depth in range(len(input_signal)):
+for depth in range(len(signal)):
     new = []
     for c in base:
         new += [c] * (depth + 1)
