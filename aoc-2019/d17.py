@@ -65,55 +65,85 @@ def intcode(memory, address=0, base=0, input=[], interrupt = 0):
     return input, address, base, running
 
 memory = list(eval(puzzle.input_data)) + [0] * 10000
-
-
+facings = {ord("^") : 1j, ord("v") : -1j, ord("<") : -1, ord(">") : 1}
 scaffolds = set()
 empty = set()
-o, _, _, _ = intcode(memory)
-curr = (0, 0)
+o, _, _, _ = intcode(memory.copy())
 x = y = 0
 for i, v in enumerate(o):
-    curr = (x, y)
     match v:
         case 10:
-            y += 1
             x = 0
+            y += 1
             continue
         case 35:
-            scaffolds.add(curr)
+            scaffolds.add(x + y * 1j)
         case 46:
-            empty.add(curr)
+            empty.add(x + y * 1j)
         case _:
-            robot = curr
-            facing = chr(v)
+            robot = x + y * 1j
+            facing = facings[v]
     x += 1
-top_left = sorted(scaffolds, key=lambda x: (-x[1], x[0]))[0]
-intersections = []
+dirs = [1, -1, -1j, 1j]
+align = 0
 for s in scaffolds:
-    if (s[0] + 1, s[1]) in scaffolds and (s[0] + -1, s[1]) in scaffolds and (s[0], s[1] + 1) in scaffolds and (s[0], s[1] - 1) in scaffolds:
-        intersections.append(s)
-alignment_sum = 0
-for i in intersections:
-    alignment_sum += i[0] * i[1]
+    if all([s + d in scaffolds for d in dirs]):
+        align += s.real * s.imag
+print(int(align))
 
-print(alignment_sum)
-exit()
-ymax = max(scaffolds, key=lambda x: x[1])[1]
-xmax = max(scaffolds, key=lambda x: x[0])[0]
+mem = memory.copy()
+mem[0] = 2
 
-for y in range(0, ymax+1):
-    for x in range(0, xmax+1):
-        c = (x, y)
-        if c == top_left:
-            print("X", end="")
-            continue
-        elif c in intersections:
-            print("O", end="")
-            continue
-        elif c in scaffolds:
-            print("#", end="")
+ymax = max(scaffolds, key=lambda x: x.imag).imag
+xmax = max(scaffolds, key=lambda x: x.real).real
+
+rows = []
+for y in range(0, int(ymax+1)):
+    row = []
+    for x in range(0, int(xmax+1)):
+        c = x + y * 1j
+        if c in scaffolds:
+            row.append("#")
         elif c in empty:
-            print(".", end="")
+            row.append(".")
         elif c == robot:
-            print(facing, end="")
-    print("")
+            row.append("^")
+    rows.append(row)
+rows = rows[::-1]
+for r in rows:
+    print(''.join(r))
+
+def get_facings(x, f):
+    facings = []
+    for d in dirs:
+        if d == -f:
+            continue
+        if x + d not in scaffolds: 
+            continue
+        facings.append(d)
+    return facings
+
+seq = []
+count = 0
+while True:
+    count += 1
+    facings = get_facings(robot, facing)
+    if not facings:
+        seq.append(count)
+        break
+    if facing in facings:
+        robot += facing
+        continue
+    assert len(facings) == 1
+    f = facings.pop()
+    c = "R" if facing * -1j == f else "L"
+    seq.append(count)
+    seq.append(c)
+    count = 0
+    facing = f
+    robot += facing
+
+seq.pop(0)
+print(','.join(map(str,seq)))
+
+que = "R,4,L,12,L,10,R,12,R,12,L,4,L,12,R,12,L,4,L,12,R,12,R,8,L,10,R,12,R,8,L,10,L,4,L,12,L,10,R,12,R,12,L,4,L,12,R,12,L,4,L,12,R,12,R,8,L,10,L,4,L,12,L,10,R,12"
