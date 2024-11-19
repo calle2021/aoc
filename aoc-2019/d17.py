@@ -65,7 +65,7 @@ def intcode(memory, address=0, base=0, input=[], interrupt = 0):
     return input, address, base, running
 
 memory = list(eval(puzzle.input_data)) + [0] * 10000
-facings = {ord("^") : 1j, ord("v") : -1j, ord("<") : -1, ord(">") : 1}
+facings = {ord("^") : -1j, ord("v") : 1j, ord("<") : -1, ord(">") : 1}
 scaffolds = set()
 empty = set()
 o, _, _, _ = intcode(memory.copy())
@@ -107,9 +107,10 @@ for y in range(0, int(ymax+1)):
         elif c in empty:
             row.append(".")
         elif c == robot:
+            print(facing)
             row.append("^")
     rows.append(row)
-rows = rows[::-1]
+#rows = rows[::-1]
 for r in rows:
     print(''.join(r))
 
@@ -144,6 +145,21 @@ while True:
     robot += facing
 
 seq.pop(0)
-print(','.join(map(str,seq)))
+movement = {}
+movement["A"] = ["L",4,"L",12,"L",10,"R",12]
+movement["B"] = ["R",12,"L",4,"L",12]
+movement["C"]  = ["R",12,"R",8,"L",10]
+main_routine = ["A","B","B","C","C","A","B","B","C","A"]
+que = "L,4,L,12,L,10,R,12,R,12,L,4,L,12,R,12,L,4,L,12,R,12,R,8,L,10,R,12,R,8,L,10,L,4,L,12,L,10,R,12,R,12,L,4,L,12,R,12,L,4,L,12,R,12,R,8,L,10,L,4,L,12,L,10,R,12"
+routine = [ord(x) for x in ','.join(main_routine)] + [ord("\n")]
 
-que = "R,4,L,12,L,10,R,12,R,12,L,4,L,12,R,12,L,4,L,12,R,12,R,8,L,10,R,12,R,8,L,10,L,4,L,12,L,10,R,12,R,12,L,4,L,12,R,12,L,4,L,12,R,12,R,8,L,10,L,4,L,12,L,10,R,12"
+print("here", routine)
+for c in "ABC":
+    print("lol",[ord(x) for x in ','.join(list(map(str,movement[c])))] + [ord("\n")])
+    routine += [ord(x) for x in ','.join(list(map(str,movement[c])))] + [ord("\n")]
+routine += [ord("n")]
+print(routine)
+mem = memory.copy()
+mem[0] = 2
+o, _, _, _ = intcode(mem, 0, 0, routine, 0)
+print(o)
