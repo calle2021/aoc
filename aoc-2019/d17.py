@@ -37,7 +37,7 @@ def intcode(memory, address=0, base=0, input=[], interrupt = 0):
                 input.append(memory[param(1)])
                 address += 2
                 if interrupt:
-                    return input, address, base, running
+                    return input[-1], address, base, running
             case 5:
                 if memory[param(1)] != 0:
                     address = memory[param(2)]
@@ -91,29 +91,6 @@ for s in scaffolds:
         align += s.real * s.imag
 print(int(align))
 
-mem = memory.copy()
-mem[0] = 2
-
-ymax = max(scaffolds, key=lambda x: x.imag).imag
-xmax = max(scaffolds, key=lambda x: x.real).real
-
-rows = []
-for y in range(0, int(ymax+1)):
-    row = []
-    for x in range(0, int(xmax+1)):
-        c = x + y * 1j
-        if c in scaffolds:
-            row.append("#")
-        elif c in empty:
-            row.append(".")
-        elif c == robot:
-            print(facing)
-            row.append("^")
-    rows.append(row)
-#rows = rows[::-1]
-for r in rows:
-    print(''.join(r))
-
 def get_facings(x, f):
     facings = []
     for d in dirs:
@@ -137,29 +114,28 @@ while True:
         continue
     assert len(facings) == 1
     f = facings.pop()
-    c = "R" if facing * -1j == f else "L"
+    c = "R" if facing * 1j == f else "L"
     seq.append(count)
     seq.append(c)
     count = 0
     facing = f
     robot += facing
-
 seq.pop(0)
-movement = {}
-movement["A"] = ["L",4,"L",12,"L",10,"R",12]
-movement["B"] = ["R",12,"L",4,"L",12]
-movement["C"]  = ["R",12,"R",8,"L",10]
-main_routine = ["A","B","B","C","C","A","B","B","C","A"]
-que = "L,4,L,12,L,10,R,12,R,12,L,4,L,12,R,12,L,4,L,12,R,12,R,8,L,10,R,12,R,8,L,10,L,4,L,12,L,10,R,12,R,12,L,4,L,12,R,12,L,4,L,12,R,12,R,8,L,10,L,4,L,12,L,10,R,12"
-routine = [ord(x) for x in ','.join(main_routine)] + [ord("\n")]
 
-print("here", routine)
-for c in "ABC":
-    print("lol",[ord(x) for x in ','.join(list(map(str,movement[c])))] + [ord("\n")])
-    routine += [ord(x) for x in ','.join(list(map(str,movement[c])))] + [ord("\n")]
-routine += [ord("n")]
-print(routine)
+func = {}
+func["A"] = ["R",4,"R",12,"R",10,"L",12]
+func["B"] = ["L",12,"R",4,"R",12]
+func["C"] = ["L",12,"L",8,"R",10]
+main = [x for x in "ABBCCABBCA"]
+
+routine = [ord(x) for x in ','.join(main)] + [10]
+for m in "ABC":
+    r = [ord(x) for x in ','.join(map(str,func[m]))] + [10]
+    assert len(r) <= 20
+    routine += [ord(x) for x in ','.join(map(str,func[m]))] + [10]
+routine += [ord("n"), 10]
+
 mem = memory.copy()
 mem[0] = 2
 o, _, _, _ = intcode(mem, 0, 0, routine, 0)
-print(o)
+print(max(o))
