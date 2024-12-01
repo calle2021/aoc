@@ -10,13 +10,9 @@ for d in data:
 a.sort()
 b.sort()
 
-diff = 0
-for x, y in zip(a, b):
-    diff += abs(x - y)
+diff = sum([abs(x - y) for x, y in zip(a, b)])
 print(diff)
 
 common = set(a) & set(b)
-sim = 0
-for c in common:
-    sim += c * b.count(c)
+sim = sum([c * b.count(c) for c in common])
 print(sim)
