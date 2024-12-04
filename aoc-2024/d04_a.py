@@ -14,7 +14,7 @@ def check(subs):
         XMAS += len(re.findall(r"SAMX", s))
 
 cols = [''.join(grid[:, col]) for col in range(grid.shape[1])]
-rows = [''.join(grid[row, :]) for row in range(grid.shape[1])]
+rows = [''.join(grid[row, :]) for row in range(grid.shape[0])]
 row, col = grid.shape
 d1 = [''.join(grid.diagonal(x)) for x in range(-row, col)]
 flipped = np.fliplr(grid)
