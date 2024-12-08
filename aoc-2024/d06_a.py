@@ -5,7 +5,6 @@ puzzle = get_data(day=6, year=2024)
 grid = set()
 obstacles = set()
 visited = set()
-dirs = [1, -1, 1j, -1j]
 facings = {"v" : 1j, "<" : -1, ">" : 1, "^" : -1j}
 for y, row in enumerate(puzzle.split("\n")):
     for x, col in enumerate(row):
@@ -16,7 +15,6 @@ for y, row in enumerate(puzzle.split("\n")):
         if col in ["v", "<", ">", "^"]:
             guard = curr
             facing = facings[col]
-            
 while guard in grid:
     visited.add(guard)
     if guard + facing in obstacles:
