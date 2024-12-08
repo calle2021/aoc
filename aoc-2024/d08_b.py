@@ -15,16 +15,13 @@ for y, row in enumerate(puzzle.split("\n")):
         else:
             antennas[col] = [curr]
 
-def point(x, y):
-    return x.real - y.real + (x.imag - y.imag) * 1j
-
 antinodes = set()
 for antenna in antennas:
     for a in antennas[antenna]:
         for b in antennas[antenna]:
             if b == a:
                 continue
-            p = point(a, b)
+            p = x - y
             for x in [p, -p]:
                 curr = a
                 while curr in grid:
