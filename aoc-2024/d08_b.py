@@ -21,10 +21,11 @@ for antenna in antennas:
         for b in antennas[antenna]:
             if b == a:
                 continue
-            p = x - y
+            p = a - b
             for x in [p, -p]:
                 curr = a
                 while curr in grid:
                     antinodes.add(curr)
                     curr = curr + x
+                    print(x)
 print(len(antinodes))
