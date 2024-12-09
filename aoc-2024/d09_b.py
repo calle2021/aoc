@@ -1,7 +1,6 @@
 from aocd import get_data
 
 puzzle = get_data(day=9, year=2024)
-
 puzzle = list(map(int, [x for x in puzzle]))
 
 q = []
