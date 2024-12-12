@@ -1,32 +1,10 @@
 from aocd import get_data
-from collections import defaultdict
-puzzle = """RRRRIICCFF
-RRRRIICCCF
-VVRRRCCFFF
-VVRCCCJFFF
-VVVVCJJCFE
-VVIVCCJJEE
-VVIIICJJEE
-MIIIIIJJEE
-MIIISIJEEE
-MMMISSJEEE"""
-puzzle = """EEEEE
-EXXXX
-EEEEE
-EXXXX
-EEEEE"""
-puzzle = """AAAAAA
-AAABBA
-AAABBA
-ABBAAA
-ABBAAA
-AAAAAA"""
-#puzzle = get_data(day=12, year=2024)
+puzzle = get_data(day=12, year=2024)
 
 grid = {}
 for y, row in enumerate(puzzle.split("\n")):
     for x, col in enumerate(row):
-        curr = x + y * 1j
+        curr = (x, y)
         grid[curr] = col
 
 def find(region, curr):
@@ -38,7 +16,7 @@ def find(region, curr):
         curr = q.pop(0)
         neighbours = []
         for d in dirs:
-            x = curr + d
+            x = (curr[0] + d[0], curr[1] + d[1])
             if x not in grid:
                 continue
             if grid[x] != region:
@@ -50,65 +28,35 @@ def find(region, curr):
                 garden.add(next)
                 visited.add(next)
     return garden
-    
-
-
-dirs = [1, -1, 1j, -1j]
+dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 gardens = []
-regions = []
 visited = set()
 for y, row in enumerate(puzzle.split("\n")):
     for x, col in enumerate(row):
-        curr = x + y * 1j
+        curr = (x, y)
         if curr in visited:
             continue
         g = find(col, curr)
         gardens.append(g)
-        regions.append(col)
 
-ans = 0
-for r, g in zip(regions, gardens):
-    perim = 0
-    outside = set()
-    for x in g:
-        p = 0
-        sides = []
-        for d in dirs:
-            if x + d in g:
-                continue
-            p += 1
-            outside.add(x+d)
-            sides.append(d)
-        if p == 0 or p == 1:
+offsets = [(0.5, 0.5), (-0.5, -0.5), (-0.5, 0.5), (0.5, -0.5)]
+price = 0
+for garden in gardens:
+    corners = set()
+    for g in garden:
+        corners |= {(g[0] + o[0], g[1] + o[1]) for o in offsets}
+    count = 0
+    for c in corners:
+        quads = [(c[0] + o[0], c[1] + o[1]) for o in offsets]
+        a = [q for q in quads if q in garden]
+        l = len(a)
+        if l == 4:
             continue
-        if p == 2:
-            if sum(sides) == 0:
+        if l == 3 or l == 1:
+            count += 1
+        if l == 2:
+            if a[0][0] == a[1][0] or a[0][1] == a[1][1]:
                 continue
-            print(r, "here")
-            perim += 1
-        if p == 3:
-            perim += 2
-        if p == 4:
-            perim += 4
-    for o in outside:
-        p = 0
-        sides = []
-        for d in dirs:
-            if o + d not in g:
-                continue
-            sides.append(d)
-            p += 1
-        if p == 2:
-            if sum(sides) == 0:
-                continue
-            perim += 1
-        if p == 3:
-            perim += 2
-
-            
-
-    #print(outside)
-
-    print(r, len(g), perim)
-    ans += len(g) * perim
-print(ans)
+            count += 2
+    price += len(garden) * count
+print(price)

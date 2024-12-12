@@ -1,15 +1,5 @@
 from aocd import get_data
 
-puzzle = """RRRRIICCFF
-RRRRIICCCF
-VVRRRCCFFF
-VVRCCCJFFF
-VVVVCJJCFE
-VVIVCCJJEE
-VVIIICJJEE
-MIIIIIJJEE
-MIIISIJEEE
-MMMISSJEEE"""
 puzzle = get_data(day=12, year=2024)
 
 grid = {}
@@ -39,8 +29,6 @@ def find(region, curr):
                 garden.add(next)
                 visited.add(next)
     return garden
-    
-
 
 dirs = [1, -1, 1j, -1j]
 gardens = []
@@ -54,15 +42,15 @@ for y, row in enumerate(puzzle.split("\n")):
         g = find(col, curr)
         gardens.append(g)
 
-ans = 0
-for g in gardens:
+price = 0
+for garden in gardens:
     perim = 0
-    for x in g:
+    for g in garden:
         p = 0
         for d in dirs:
-            if x + d in g:
+            if g + d in garden:
                 continue
             p += 1
         perim += p
-    ans += len(g) * perim
-print(ans)
+    price += len(garden) * perim
+print(price)
