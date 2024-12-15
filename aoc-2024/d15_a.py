@@ -21,6 +21,7 @@ for y, row in enumerate(grid.split("\n")):
             boxes.add(curr)
         if col == "@":
             robot =  curr
+
 def moveboxes(curr, dir):
     q = []
     while True:
@@ -47,8 +48,9 @@ for i, move in enumerate(moves):
         boxes.remove(q)
     for q in Q:
         boxes.add(q + move)
-
-print(sum([int(b.real + b.imag * 100) for b in boxes]))
+        
+GPS = sum([int(b.real + b.imag * 100) for b in boxes])
+print(GPS)
 
 
 

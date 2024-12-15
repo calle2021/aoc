@@ -41,7 +41,7 @@ def moveboxesx(curr, dir):
 
 def moveboxesy(curr, dir):
     q = []
-    # find all boxes that are connected in the current direction?
+    #find all boxes that are connected in the current direction?
     box = boxesx[curr + dir]
     q = [box]
     connected = set()
@@ -56,7 +56,7 @@ def moveboxesy(curr, dir):
         for next in neighbours:
             q.append(next)
             connected.add(next)
-    # check if any of these are facing a wall in the current direction
+    #check if any of these are facing a wall in the current direction
     q = []
     for box in connected:
         left = box - 0.5
@@ -70,29 +70,31 @@ def moveboxesy(curr, dir):
 
 for i, move in enumerate(moves):
     curr = robot + move
-    if curr not in walls and curr not in boxesx: # immediate empty
+    if curr not in walls and curr not in boxesx: #immediate empty
         robot += move
         continue
     if curr in walls: #immediate wall
         continue
     Q = []
-    if move == 1 or move == -1: # moving in x (don't consider half steps)
+    if move == 1 or move == -1: #moving in x (don't consider half steps)
         Q = moveboxesx(robot, move)
     else:
         Q = moveboxesy(robot, move)
     if not Q: continue
     robot += move
-    new = []
+
+    newboxes = []
     for q in Q:
-        n = boxesx[q]
-        if n in boxes:
-            boxes.remove(n)
-        new.append(n + move)
+        b = boxesx[q]
+        boxes -= {b}
+        newboxes.append(b + move)
         del boxesx[q]
-    for q, n in zip(Q, new):
-        boxesx[q + move] = n
-        boxes.add(n)
-print(sum([int(b.real - 0.5 + b.imag * 100) for b in boxes]))
+    for q, nb in zip(Q, newboxes):
+        boxesx[q + move] = nb
+        boxes.add(nb)
+        
+GPS = sum([int(b.real - 0.5 + b.imag * 100) for b in boxes])
+print(GPS)
 
 
 
