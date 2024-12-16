@@ -17,10 +17,8 @@ for y, row in enumerate(puzzle.split("\n")):
 
 front = []
 heappush(front, (0, (1, 0), start))
-came_from = {}
 cost_so_far = {}
-came_from[start] = None
-cost_so_far[(start, (1, 0))] = 0
+cost_so_far[((1, 0), start)] = 0
 while front:
     curr = heappop(front)
     cost, dir, pos = curr
@@ -29,18 +27,15 @@ while front:
         cost_so_far[pos] = cost
         break
     neighbours = []
-    if (pos[0] + dir[0], pos[1] + dir[1]) in paths:
-        neighbours.append((1, dir, (pos[0] + dir[0], pos[1] + dir[1])))
+    straight = (pos[0] + dir[0], pos[1] + dir[1])
+    if straight in paths:
+        neighbours.append((1, dir, straight))
     neighbours.append((1000, (dir[1], -dir[0]), pos))
     neighbours.append((1000, (-dir[1], dir[0]), pos))
     for next in neighbours:
-        cost, dir, pos = next
-        if pos not in paths:
-            continue
-        new_cost = cost_so_far[(curr[2], curr[1])] + cost
-        if (pos, dir) not in cost_so_far or new_cost < cost_so_far[(pos, dir)]:
-            cost_so_far[(pos, dir)] = new_cost
-            priority = new_cost
-            heappush(front, (priority, dir, pos))
-            came_from[pos] = curr
+        ncost, ndir, npos = next
+        new_cost = cost_so_far[(dir, pos)] + ncost
+        if (ndir, npos) not in cost_so_far or new_cost < cost_so_far[(ndir, npos)]:
+            cost_so_far[(ndir, npos)] = new_cost
+            heappush(front, (new_cost, ndir, npos))
 print(cost_so_far[goal])
