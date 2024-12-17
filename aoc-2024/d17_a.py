@@ -18,42 +18,33 @@ def combo(x, a, b, c):
         return c
     if x == 7:
         assert False
-
 pointer = 0
 output = []
-
-unique = set()
+a = 37194861945479
 while pointer < len(prog):
     opcode = prog[pointer]
     operand = prog[pointer + 1]
     if opcode in [0, 2, 5, 6, 7]:
         operand = combo(operand, a, b, c)
-    unique.add(opcode)
     match (opcode):
         case 0:
-            a = int(a / 2 ** operand)
-            pointer += 2
+            a = a >> operand
         case 1:
             b = b ^ operand
-            pointer += 2
         case 2:
             b = operand % 8
-            pointer += 2
         case 3:
-            if a == 0:
-                pointer += 2
-            else:
+            if a != 0:
                 pointer = operand
+                continue
         case 4:
             b = b ^ c
-            pointer += 2
         case 5:
             output.append(operand % 8)
-            pointer += 2
         case 6:
-            b = int(a / 2 ** operand)
-            pointer += 2
+            b = a >> operand
         case 7:
-            c = int(a / 2 ** operand)
-            pointer += 2
+            c = a >> operand
+    pointer += 2
+print(b, c)
 print(','.join(list(map(str,output))))
