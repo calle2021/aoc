@@ -14,6 +14,7 @@ for curr in prog[::-1]:
         out = b % 8
         a = a >> 3
         if out == curr and a != 0:
+            print(i, b, c)
             i = i << 3
             break
         i += 1
