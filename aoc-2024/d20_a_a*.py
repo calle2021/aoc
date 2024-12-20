@@ -1,6 +1,7 @@
 from aocd import get_data
 from heapq import *
 from collections import defaultdict
+import time
 
 puzzle = """###############
 #...#...#.....#
@@ -17,13 +18,13 @@ puzzle = """###############
 #.#.#.#.#.#.###
 #...#...#...###
 ###############"""
-#puzzle = get_data(day=20, year=2024)
+puzzle = get_data(day=20, year=2024)
 
 grid = set()
 path = set()
 for y, row in enumerate(puzzle.split("\n")):
     for x, col in enumerate(row):
-        curr = (x , y)
+        curr = (x, y)
         grid.add(curr)
         if col == "#":
             continue
@@ -32,7 +33,7 @@ for y, row in enumerate(puzzle.split("\n")):
             start = curr
         if col == "E":
             goal = curr
-            
+
 dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
 q = []
@@ -55,50 +56,49 @@ while q:
         if next not in cache or new_cost < cache[next]:
             cache[next] = new_cost
             heappush(q, (new_cost, next))
+
+
+def manhattan(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+
+s = time.time()
 best = cache[goal]
-print(best)
-q = [(0, 0, -1, start)]
-# priority que with cheat?
-cost_so_far = defaultdict(list)
-cost_so_far[start].append(0)
-max_cheat = 20
+q = []
+heappush(q, (0, 0, 0, -1, start))
+saved_so_far = []
+mcheat = 2
+msaved = 100
 while q:
-    cost, cheat, prev, curr = q.pop(0)
+    prio, cost, cheat, prev, curr = heappop(q)
     x, y = curr
 
-    if cheat == max_cheat and curr not in path:
+    if cheat == mcheat and curr not in path:
         continue
-    if cheat == max_cheat:
-        cost_so_far[goal].append(cost + best - cache[curr])
+    if cheat == mcheat:
+        cost = cost + best - cache[curr]
+        saved = best - cost
+        if saved >= msaved:
+            saved_so_far.append(saved)
         continue
-    if curr == goal:
-        continue
-    
+    if curr == goal and best - cost < msaved:
+        break
+
     neighbours = []
     for dx, dy in dirs:
         pos = (x + dx, y + dy)
         if pos == prev:
             continue
-        if cheat < max_cheat and pos in grid:
+        if 0 < cheat < mcheat and pos in grid:
             neighbours.append((cost + 1, cheat + 1, curr, pos))
-        if pos in path and curr in path:
+            continue
+        if cheat == 0 and pos in grid:
+            neighbours.append((cost + 1, cheat + 1, curr, pos))
+        if pos in path:
             neighbours.append((cost + 1, cheat, curr, pos))
     for next in neighbours:
         ncost, ncheat, nprev, npos = next
-        q.append((ncost, ncheat, nprev, npos))
-        cost_so_far[npos].append(ncost)
+        heappush(q, (ncost + manhattan(curr, npos), ncost, ncheat, nprev, npos))
 
-count = defaultdict(int)
-for x in cost_so_far[goal]:
-    diff = best - x
-    if diff > 0:
-        count[diff] += 1
-for c in count.items():
-    print(c)
-exit() 
-count = 0
-for x in cost_so_far[goal]:
-    diff = best - x
-    if diff >= 100:
-        count += 1
-print(count - 1)
+print(len(saved_so_far))
+print(time.time() - s)
