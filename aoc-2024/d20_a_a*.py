@@ -1,23 +1,6 @@
 from aocd import get_data
 from heapq import *
-from collections import defaultdict
-import time
 
-puzzle = """###############
-#...#...#.....#
-#.#.#.#.#.###.#
-#S#...#.#.#...#
-#######.#.#.###
-#######.#.#...#
-#######.#.###.#
-###..E#...#...#
-###.#######.###
-#...###...#...#
-#.#####.#.###.#
-#.#...#.#.#...#
-#.#.#.#.#.#.###
-#...#...#...###
-###############"""
 puzzle = get_data(day=20, year=2024)
 
 grid = set()
@@ -62,7 +45,6 @@ def manhattan(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
-s = time.time()
 best = cache[goal]
 q = []
 heappush(q, (0, 0, 0, -1, start))
@@ -99,6 +81,4 @@ while q:
     for next in neighbours:
         ncost, ncheat, nprev, npos = next
         heappush(q, (ncost + manhattan(curr, npos), ncost, ncheat, nprev, npos))
-
 print(len(saved_so_far))
-print(time.time() - s)
