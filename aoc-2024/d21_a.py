@@ -1,5 +1,7 @@
 from aocd import get_data
 from collections import defaultdict
+from itertools import product
+
 puzzle = """029A
 980A
 179A
@@ -19,7 +21,7 @@ dirgrid = {v : k for k, v in dirpad.items()}
 dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 ddirs = {(1, 0) : ">", (-1, 0) : "<", (0, 1) : "v", (0, -1) : "^"}
 
-def bfs(start, goal, grid):
+def paths(start, goal, grid):
     q = [(start, [], [])]
     sequance = []
     mh = abs(start[0] - goal[0]) + abs(start[1] - goal[1])
@@ -42,50 +44,46 @@ for nx in numgrid:
         if nx == ny:
             nsequances[(numgrid[nx], numgrid[ny])].append("A")
             continue
-        seq = bfs(nx, ny, numgrid)
+        seq = paths(nx, ny, numgrid)
         for s in seq:
             nsequances[(numgrid[nx], numgrid[ny])].append(s)
+
 dsequances = defaultdict(list)
 for dx in dirgrid:
     for dy in dirgrid:
         if dx == dy:
             dsequances[(dirgrid[dx], dirgrid[dy])].append("A")
             continue
-        seq = bfs(dx, dy, dirgrid)
+        seq = paths(dx, dy, dirgrid)
         for s in seq:
             dsequances[(dirgrid[dx], dirgrid[dy])].append(s)
-
-
-def dfs(sequance, robot):
-    if robot == 0:
-        return
-    for seq in sequance:
-        print(seq)
-        break
-
-def combinations(comb, i, curr=""):
-    if i == len(comb):
-        combs.append(curr)
-        return
-    for c in comb[i]:
-        combinations(comb, i+1, curr + c + "A")
-    return
-
+            
 complexities = 0
 for code in puzzle.split("\n"):
     numeric = int(''.join(c for c in code if c.isdigit()))
-    code = [int(x) if x.isdigit() else x for x in code]
+    keys = [int(x) if x.isdigit() else x for x in code]
     start = "A"
-    comb = []
-    for c in code:
-        goal = c
-        comb.append(nsequances[(start, goal)])
+    path = []
+    for key in keys:
+        goal = key
+        path.append(nsequances[(start, goal)])
         start = goal
-    combs = []
-    combinations(comb, 0, "")
-    for comb in combs:
-        print(comb)
-        dfs(comb, 2)
-        break
+    combs = ['A'.join(c) + "A" for c in product(*path)]
+
+
+    length = 0
+    q = [(combs[0][0], "A", 2, "")]
+    visited = {}
+    print(dsequances[("A", "<")])
+    while q:
+        curr, start, depth, path = q.pop()
+        print("#### here" , curr, start, depth, path)
+        if depth == 0:
+            print("PATH", path)
+            continue
+        for seq in curr:
+            print(seq, start)
+            for dseq in dsequances[(start, seq)]:
+                q.append((dseq, seq, depth-1, path + dseq + "A"))
+
     break
-print(complexities)
