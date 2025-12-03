@@ -13,5 +13,5 @@ for line in puzzle.splitlines():
         number += str(numbers[i])
         numbers = numbers[i + 1:]
         consumed += 1
-    joltage += int(''.join(number))
+    joltage += int(number)
 print(joltage)
