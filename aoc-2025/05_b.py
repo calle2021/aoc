@@ -1,53 +1,50 @@
 from aocd.models import Puzzle
-puzzle = """3-5
-10-14
-16-20
-12-18
+puzzle = Puzzle(year=2025, day=5).input_data
 
-1
-5
-8
-11
-17
-32"""
-#puzzle = Puzzle(year=2025, day=5).input_data
 ranges = []
 for r in puzzle.splitlines():
     if not len(r): continue
     if "-" in r:
         lo, hi = r.split("-")
         ranges.append((int(lo), int(hi)))
-print(ranges)
 
-merged = [ranges.pop(0)]
-print(merged)
-def merge(r):
-    update = False
+def merge(window, data):
     i = 0
-    new = None
-    for m in merged:
-        lo = m[0]
-        hi = m[1]
-        if r[0] >= m[0] and r[0] <= m[1]:
-            hi = max(m[1], r[1])
+    if window in data:
+        i = data.index(window)
+        data.pop(i)
+    for j, w in enumerate(data):
+        lo = w[0]
+        hi = w[1]
+        update = False
+        if window[0] >= w[0] and window[0] <= w[1]:
+            hi = max(w[1], window[1])
             update = True
-        if r[1] >= m[0] and r[1] <= m[1]:
-            lo = min(r[0], m[0])
+        if window[1] >= w[0] and window[1] <= w[1]:
+            lo = min(window[0], w[0])
             update = True
         if update:
-            new = (lo, hi)
-            break
-        i += 1
-    if update:
-        merged[i] = new
-    else:
-        merged.append(r)
+            data[j] = (lo, hi)
+            return data[j]
+    data.insert(i, window)
+    return window
 
-for r in ranges:
-    merge(r)
-print(merged)
+merged = []
+for window in ranges:
+    while True:
+        res = merge(window, merged)
+        if res == window:
+            break
+        window = res
+
+for window in merged:
+    while True:
+        res = merge(window, merged)
+        if res == window:
+            break
+        window = res
+
 fresh = 0
-for m in merged:
-    s = m[1] - m[0] + 1
-    fresh += s
+for win in merged:
+    fresh += win[1] - win[0] + 1
 print(fresh)
