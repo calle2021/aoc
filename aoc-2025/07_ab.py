@@ -5,7 +5,8 @@ for line in puzzle.splitlines():
     diagram.append([x for x in line])
 start = (diagram[0].index("S"), 0)
 cache = {}
-def timelines(curr):
+splits = set()
+def dfs(curr):
     if curr in cache:
         return cache[curr]
     x, y = curr
@@ -13,13 +14,16 @@ def timelines(curr):
         return 1
     neighbors = []
     if diagram[y][x] == "^":
+        splits.add(curr)
         neighbors = [(x + 1, y + 1), (x - 1, y + 1)]
     else:
         neighbors = [(x, y + 1)]
-    splits = 0
+    timelines = 0
     for next in neighbors:
-        splits += timelines(next)
-    cache[curr] = splits
-    return splits
-splits = timelines(start)
+        timelines += dfs(next)
+    cache[curr] = timelines
+    return timelines
+timelines = dfs(start)
+splits = len(splits)
 print(splits)
+print(timelines)
