@@ -3,6 +3,7 @@ puzzle = Puzzle(year=2025, day=8).input_data
 junktions = [eval(x) for x in puzzle.splitlines()]
 connections = []
 pairs = []
+unique = set()
 def euc(x, y):
     return (x[0] - y[0]) ** 2 + (x[1] - y[1]) ** 2 + (x[2] - y[2]) ** 2
 for i, x in enumerate(junktions):
@@ -11,12 +12,22 @@ for i, x in enumerate(junktions):
         add = tuple(sorted((x, y)))
         dist = euc(x, y)
         pairs.append((dist, add))
+        unique.add(x)
+        unique.add(y)
 
 pairs = sorted(pairs)
 pairs = pairs[::2]
-for _ in range(1000):
+last = (0, 0)
+while pairs:
     a, b = pairs.pop(0)
     x, y = b
+    if x in unique:
+        unique.remove(x)
+    if y in unique:
+        unique.remove(y)
+    last = (x, y)
+    if not unique:
+        break
     ids = []
     for i, c in enumerate(connections):
         if x in c or y in c:
@@ -41,5 +52,4 @@ for _ in range(1000):
         updated.append(connections[j])
     updated.append(circ)
     connections = updated
-lens = sorted([len(x) for x in connections])
-print(lens[-1] * lens[-2] * lens[-3])
+print(last[0][0] * last[1][0])
