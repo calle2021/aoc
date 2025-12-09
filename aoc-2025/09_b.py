@@ -21,10 +21,44 @@ for x in red:
         c0 = (x.real, y.imag)
         c1 =  (y.real, x.imag)
         if (x.imag == y.imag):
-            for i in range(x.real, y.real):
-                green.add(i + x.imag)
-
+            for i in range(int(x.real), int(y.real)):
+                green.add(i + x.imag * 1j)
         if (x.real == y.real):
-            for i in range(x.imag, y.imag):
+            for i in range(int(x.imag), int(y.imag)):
                 green.add(x.real + i * 1j)
+
 bounds = red | green
+
+dir = -1j
+right = 1
+
+start = 0
+for x in bounds:
+    start = x
+    break
+curr = start
+inside = set()
+while True:
+    next = curr + dir
+    if next in bounds:
+        print(next)
+        break
+    dir *= 1j
+    right *= 1j
+    if curr == start:
+        break
+
+for i in range(9):
+    for j in range(15):
+        im = j + i * 1j
+        if im == start:
+            print("S", end="")
+        elif im in red:
+            print("#", end="")
+        elif im in green:
+            print("X", end="")
+        elif im in inside:
+            print("o", end="")
+        else:
+            print(".", end="")
+    print("")
