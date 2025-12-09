@@ -19,11 +19,13 @@ maxx = 0
 maxy = 0
 minx = float("inf")
 miny = float("inf")
+topleft = (float("inf"), float("inf"))
 for x in red:
     maxx = max(x[0], maxx)
     maxy = max(x[1], maxy)
     minx = min(x[0], minx)
     miny = min(x[1], miny)
+    topleft = min(topleft, x)
     for y in red:
         if x == y: continue
         c0 = (x[0], y[1])
@@ -34,36 +36,30 @@ for x in red:
         if (x[0] == y[0]):
             for i in range(x[1], y[1]):
                 green.add((x[0], i))
+redandgreen = red | green
+print(topleft)
+topleft = (topleft[0] - 1, topleft[1] - 1)
 green -= red
-print("OMG")
-minx -= 1
-miny -= 1
-maxx += 1
-maxy += 1
 inside = set()
-for x in range(minx, maxx):
-    for y in range(miny, maxy):
-        inside.add((x, y))
 
-outside = set()
-q = [(minx, miny)]
+## walk on the ouside of if
+print(minx, maxx, miny, maxy)
+start = ((maxx- minx)// 2 + minx, (maxy - miny) // 2 + miny)
+inside = set()
+q = [start]
 dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 while q:
     x, y = q.pop(0)
-
+    print(x, y)
     neighbours = [(x + d[0], y + d[1]) for d in dirs]
     for next in neighbours:
-        if next in red or next in green or next in outside:
-            continue
-        if next[0] < minx or next[0] > maxx:
-            continue
-        if next[1] < miny or next[1] > maxy:
+        if next in red or next in green or next in inside:
             continue
         q.append(next)
-        outside.add(next)
-#print(outside)
-inside -= outside
-
+        inside.add(next)
+inside |= red
+inside |= green
+areas = []
 for x in red:
     for y in red:
         if x == y: continue
@@ -78,9 +74,11 @@ for x in red:
         areas.append(left * right)
 print(max(areas))
 exit()
-for y in range(miny, maxy):
-    for x in range(minx, maxx):
-        if (x, y) in red:
+for y in range(miny - 2, maxy + 4):
+    for x in range(minx - 2, maxx + 4):
+        if (x, y) == start:
+            print("S", end="")
+        elif (x, y) in red:
             print("#", end="")
         elif (x, y) in green:
             print("X", end="")
