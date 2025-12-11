@@ -15,7 +15,7 @@ ggg: out
 hhh: out"""
 
 
-#puzzle = Puzzle(year=2025, day=11).input_data
+puzzle = Puzzle(year=2025, day=11).input_data
 paths = {}
 for line in puzzle.splitlines():
     x, y = line.split(": ")
@@ -23,21 +23,20 @@ for line in puzzle.splitlines():
     paths[x] = y
 
 cache = {}
-def dfs(curr, path):
-    tpath = tuple(path)
-    if (curr, tpath) in cache:
-        return cache[(curr, tpath)]
+def dfs(curr):
+    if curr in cache:
+        return cache[curr]
     if curr == "out":
-        if "dac" in path and "fft" in path:
-            return 1
         return 0
+    if curr == "dac" or curr == "fft":
+        return 1
     neighbors = paths[curr]
 
     timelines = 0
     for next in neighbors:
-        timelines += dfs(next, path | {next})
-    cache[(curr, tpath)] = timelines
+        timelines += dfs(next)
+    cache[curr] = timelines
     return timelines
 
-res = dfs("svr", {"svr"})
+res = dfs("svr")
 print(res)
