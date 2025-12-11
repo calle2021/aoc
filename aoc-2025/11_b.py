@@ -1,5 +1,6 @@
 from aocd.models import Puzzle
 import re
+from collections import defaultdict
 puzzle = """svr: aaa bbb
 aaa: fft
 fft: ccc
@@ -22,21 +23,19 @@ for line in puzzle.splitlines():
     y = y.split(" ")
     paths[x] = y
 
-cache = {}
-def dfs(curr):
-    if curr in cache:
-        return cache[curr]
+q = ["svr"]
+came_from = defaultdict(list)
+came_from["svr"].append(None)
+while q:
+    curr = q.pop(0)
     if curr == "out":
-        return 0
-    if curr == "dac" or curr == "fft":
-        return 1
+        print("out")
+        continue
     neighbors = paths[curr]
-
-    timelines = 0
     for next in neighbors:
-        timelines += dfs(next)
-    cache[curr] = timelines
-    return timelines
-
-res = dfs("svr")
-print(res)
+        if next in came_from:
+            continue
+        came_from[next].append(next)
+        q.append(next)
+print(came_from["out"])
+print("Done")
