@@ -5,17 +5,14 @@ puzzle = puzzle.split("\n\n")
 allgrids = puzzle[-1]
 allshapes = puzzle[:-1]
 grids = []
-quant = []
+quants = []
 shapes = {}
 for grid in allgrids.splitlines():
     x, y = grid.split(": ")
     y = [int(n) for n in y.split()]
     m, n = x.split("x")
-    m = int(m)
-    n = int(n)
-    g = np.zeros((m, n))
-    grids.append(g)
-    quant.append(np.array(y))
+    grids.append(int(n) * int(m))
+    quants.append(np.array(y))
 shapes = []
 for shape in allshapes:
     arr = []
@@ -25,10 +22,10 @@ for shape in allshapes:
         arr.append([1 if x == "#" else 0 for x in row])
     arr = np.array(arr)
     shapes.append(np.sum(arr))
+
+shapes = np.array(shapes)
 ans = 0
-for q, g in zip(quant, grids):
-    dims = g.shape
-    area = dims[0] * dims[1]
-    if sum(q * shapes) < area:
+for quant, area in zip(quants, grids):
+    if np.sum(quant * shapes) < area:
         ans += 1
 print(ans)
